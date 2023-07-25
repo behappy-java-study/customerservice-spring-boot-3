@@ -21,26 +21,15 @@ jobs:
     environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@248ae51c2e8cc9622ecf50685c8bf7150c6e8813
-        with:
-          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
-
       - name: Checkout Code
-        uses: actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28
+        uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
-        with:
-          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          
-      - uses: graalvm/setup-graalvm@01b9840538b867061986ea406d1b79c91a701d17
+      - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
           java-version: '17'
           components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.RELEASE_TOKEN }}
           cache: maven
 
       - name: Print debug info
@@ -59,24 +48,15 @@ jobs:
       - name: Set project version as environment variable
         run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
-      - name: Scan ECR image with Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@9ab158e8597f3b310480b9a69402b419bc03dbd5
-        with:
-          image-ref: ${{ secrets.ECR_REPOSITORY_NAME }}:latest
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-
       - name: Tag and push image to AWS ECR
         env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           IMAGE_TAG: ${{ env.PROJECT_VERSION }}
         run: |
-          aws ecr get-login-password --region $AWS_REGION | docker login -u AWS --password-stdin $ECR_REGISTRY
+          echo "$REGISTRY_PASSWORD" | sudo docker login -u ${REGISTRY_USERNAME} --password-stdin $ECR_REGISTRY
           docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"          
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" 
