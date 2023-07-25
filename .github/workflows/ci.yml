@@ -44,7 +44,10 @@ jobs:
           java --version
 
       - name: Build with Maven and Buildpacks
-        run: mvn clean spring-boot:build-image -Dspring-boot.build-image.imageName=${{ secrets.DOCKER_REPOSITORY_NAME }}:latest
+        env:
+          DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY_NAME }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: mvn clean spring-boot:build-image -Dspring-boot.build-image.imageName=$DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
 
       - name: Set project version as environment variable
         run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
