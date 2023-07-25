@@ -28,6 +28,20 @@ jobs:
     environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
+      - name: 测试
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          IMAGE_TAG: ${{ env.PROJECT_VERSION }}-native
+        run: |
+          echo "$ECR_REGISTRY"
+          echo "$ECR_REPOSITORY"
+          echo "$REGISTRY_USERNAME"
+          echo "$REGISTRY_PASSWORD"
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" 
+
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -54,13 +68,13 @@ jobs:
       - name: Set project version as environment variable
         run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
-      - name: Tag and push image to AWS ECR
+      - name: Tag and push image to Docker Hub
         env:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
           REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          IMAGE_TAG: ${{ env.PROJECT_VERSION }}
+          IMAGE_TAG: ${{ env.PROJECT_VERSION }}-native
         run: |
           echo "$REGISTRY_PASSWORD" | sudo docker login -u ${REGISTRY_USERNAME} --password-stdin $ECR_REGISTRY
           docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
