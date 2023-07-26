@@ -26,6 +26,10 @@ jobs:
       contents: read
 
     environment: ${{ github.event.inputs.environment || 'dev' }}
+    env:
+      DOCKER_REGISTRY: docker.io
+      DOCKER_REPOSITORY: customerservice-spring-boot-3
+      DOCKER_USERNAME: wangxiaowu950330
 
     steps:
       - name: Checkout Code
@@ -44,9 +48,6 @@ jobs:
           java --version
 
       - name: Build with Maven and Buildpacks
-        env:
-          DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY_NAME }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: mvn clean spring-boot:build-image -Dspring-boot.build-image.imageName=$DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
 
       - name: Set project version as environment variable
@@ -58,9 +59,6 @@ jobs:
 
       - name: Tag and push image to Docker Hub
         env:
-          DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-          DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY_NAME }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           IMAGE_TAG: ${{ env.PROJECT_VERSION }}-original
         run: |
