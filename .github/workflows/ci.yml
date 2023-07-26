@@ -27,7 +27,6 @@ jobs:
 
     environment: ${{ github.event.inputs.environment || 'dev' }}
     env:
-      DOCKER_REGISTRY: docker.io
       DOCKER_REPOSITORY: customerservice-spring-boot-3
       DOCKER_USERNAME: wangxiaowu950330
 
@@ -62,7 +61,7 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           IMAGE_TAG: ${{ env.PROJECT_VERSION }}-original
         run: |
-          echo "$DOCKERHUB_TOKEN" | sudo docker login -u ${DOCKER_USERNAME} --password-stdin $DOCKER_REGISTRY
+          echo "$DOCKERHUB_TOKEN" | sudo docker login -u ${DOCKER_USERNAME} --password-stdin
           docker tag $DOCKER_USERNAME/$DOCKER_REPOSITORY:latest $DOCKER_USERNAME/$DOCKER_REPOSITORY:$IMAGE_TAG
           docker push $DOCKER_USERNAME/$DOCKER_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$DOCKER_REGISTRY/$DOCKER_USERNAME/$DOCKER_REPOSITORY:$IMAGE_TAG"
+          echo "::set-output name=image::$DOCKER_USERNAME/$DOCKER_REPOSITORY:$IMAGE_TAG"
