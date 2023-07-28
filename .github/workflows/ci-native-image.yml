@@ -50,6 +50,9 @@ jobs:
           gu --version
           native-image --version
 
+      - name: Collect Workflow Telemetry
+        uses: runforesight/workflow-telemetry-action@v1
+
       - name: Build Native Image with Buildpacks
         run: |
           mvn clean -Pnative spring-boot:build-image -Dspring-boot.build-image.imageName=$DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
