@@ -33,7 +33,7 @@ spring:
     url: jdbc:h2:mem:customerservice;Mode=postgreSQL
     username: sa
     # It needs to be empty for h2 (enter sa into h2-console)
-    password: # It needs to be empty for h2
+    password: sa
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.h2.Driver #it has to be populated to avoid "Failed to load driver in either of HikariConfig class loader or Thread context classloader" error
     ### PostgreSQL

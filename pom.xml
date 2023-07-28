@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.0</version>
+		<version>3.0.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -17,7 +17,8 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<springdoc-openapi.version>1.6.12</springdoc-openapi.version>
+		<liquibase-maven-plugin.version>4.19.0</liquibase-maven-plugin.version>
+		<liquibase-hibernate.version>4.19.0</liquibase-hibernate.version>
 	</properties>
 
 	<dependencies>
@@ -37,11 +38,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>${springdoc-openapi.version}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
@@ -104,6 +100,40 @@
 						</env>
 					</image>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${liquibase-maven-plugin.version}</version>
+				<configuration>
+					<changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
+					<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+				</configuration>
+
+				<dependencies>
+					<dependency>
+						<groupId>org.liquibase.ext</groupId>
+						<artifactId>liquibase-hibernate6</artifactId>
+						<version>${liquibase-hibernate.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework.data</groupId>
+						<artifactId>spring-data-jpa</artifactId>
+						<version>3.0.2</version>
+					</dependency>
+					<dependency>
+						<groupId>io.hypersistence</groupId>
+						<artifactId>hypersistence-utils-hibernate-60</artifactId>
+						<version>3.2.0</version>
+					</dependency>
+					<dependency>
+						<groupId>com.fasterxml.jackson.core</groupId>
+						<artifactId>jackson-databind</artifactId>
+						<version>2.14.2</version>
+					</dependency>
+
+				</dependencies>
+
 			</plugin>
 		</plugins>
 	</build>
