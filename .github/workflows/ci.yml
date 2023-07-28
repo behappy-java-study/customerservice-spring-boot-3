@@ -46,6 +46,9 @@ jobs:
           echo "JAVA_HOME: $JAVA_HOME"
           java --version
 
+      - name: Collect Workflow Telemetry
+        uses: runforesight/workflow-telemetry-action@v1
+
       - name: Build with Maven and Buildpacks
         run: mvn clean spring-boot:build-image -Dspring-boot.build-image.imageName=$DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
 
