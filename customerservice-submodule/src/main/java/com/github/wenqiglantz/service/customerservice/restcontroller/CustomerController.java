@@ -1,5 +1,6 @@
 package com.github.wenqiglantz.service.customerservice.restcontroller;
 
+import com.github.wenqiglantz.service.customerservice.common.Test;
 import com.github.wenqiglantz.service.customerservice.data.CustomerVO;
 import com.github.wenqiglantz.service.customerservice.service.CustomerService;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ public class CustomerController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createCustomer(@RequestBody CustomerVO customerVO, UriComponentsBuilder uriBuilder)
         throws Exception {
+        Test.test();
         CustomerVO newCustomerVO = customerService.saveCustomer(customerVO);
         URI location = uriBuilder
                 .path("/customers/{customerId}")

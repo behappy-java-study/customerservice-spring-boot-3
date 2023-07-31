@@ -9,6 +9,15 @@
 	</parent>
 	<artifactId>customerservice-submodule</artifactId>
 
+	<dependencies>
+
+		<dependency>
+			<groupId>com.github.wenqiglantz.service</groupId>
+			<artifactId>customerservice-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>

@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>customerservice-submodule</module>
+		<module>customerservice-common</module>
 	</modules>
 
 	<groupId>com.github.wenqiglantz.service</groupId>
