@@ -3,17 +3,13 @@ name: CI Native Image Buildpacks workflow
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Select the Environment to deploy'
+      workload:
+        description: 'Select the workload to build'
         type: choice
         required: true
         options:
-          - dev
-          - qa
-          - uat
-          - load
-          - prod
-        default: 'dev'
+          - customerservice-submodule
+        default: 'customerservice-submodule'
 
 jobs:
 
@@ -27,7 +23,8 @@ jobs:
 
     environment: ${{ github.event.inputs.environment || 'dev' }}
     env:
-      DOCKER_REPOSITORY: customerservice-spring-boot-3
+      WORKLOAD: ${{ github.event.inputs.workload }}
+      DOCKER_REPOSITORY: customerservice-spring-boot-3/${{ github.event.inputs.workload }}
       DOCKER_USERNAME: wangxiaowu950330
 
     steps:
@@ -55,7 +52,7 @@ jobs:
 
       - name: Build Native Image with Buildpacks
         run: |
-          mvn clean -pl customerservice-submodule -Pnative spring-boot:build-image -Dspring-boot.build-image.imageName=$DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
+          mvn clean -pl $WORKLOAD -am -Pnative spring-boot:build-image -Dspring-boot.build-image.imageName=$DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
