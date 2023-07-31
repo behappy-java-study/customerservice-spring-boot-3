@@ -5,9 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>customerservice-submodule</module>
+	</modules>
 
 	<groupId>com.github.wenqiglantz.service</groupId>
 	<artifactId>customerservice</artifactId>
@@ -53,6 +58,35 @@
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.graalvm.buildtools</groupId>
+					<artifactId>native-maven-plugin</artifactId>
+				</plugin>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<configuration>
+						<excludes>
+							<exclude>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+							</exclude>
+						</excludes>
+						<image>
+							<!--默认为：https://github.com/paketo-buildpacks/tiny-builder -->
+							<!--archived to another repo：https://github.com/paketo-buildpacks/builder-jammy-tiny -->
+							<builder>paketobuildpacks/builder-jammy-tiny</builder>
+							<env>
+								<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+								<BP_NATIVE_IMAGE_BUILD_ARGUMENTS>-march=compatibility</BP_NATIVE_IMAGE_BUILD_ARGUMENTS>
+							</env>
+						</image>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.hibernate.orm.tooling</groupId>
@@ -71,31 +105,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.graalvm.buildtools</groupId>
-				<artifactId>native-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-					<image>
-						<!--默认为：https://github.com/paketo-buildpacks/tiny-builder -->
-						<!--archived to another repo：https://github.com/paketo-buildpacks/builder-jammy-tiny -->
-						<builder>paketobuildpacks/builder-jammy-tiny</builder>
-						<env>
-							<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-							<BP_NATIVE_IMAGE_BUILD_ARGUMENTS>-march=compatibility</BP_NATIVE_IMAGE_BUILD_ARGUMENTS>
-						</env>
-					</image>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
