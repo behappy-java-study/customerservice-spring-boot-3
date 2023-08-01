@@ -90,6 +90,14 @@
 						<plugin>
 							<groupId>org.graalvm.buildtools</groupId>
 							<artifactId>native-maven-plugin</artifactId>
+							<executions>
+								<execution>
+									<id>build-image</id>
+									<goals>
+										<goal>compile-no-fork</goal>
+									</goals>
+								</execution>
+							</executions>
 						</plugin>
 						<plugin>
 							<groupId>org.springframework.boot</groupId>
@@ -115,7 +123,7 @@
 								<execution>
 									<id>build-image</id>
 									<goals>
-										<goal>repackage</goal>
+										<goal>build-image-no-fork</goal>
 									</goals>
 								</execution>
 							</executions>
