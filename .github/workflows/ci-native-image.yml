@@ -24,7 +24,7 @@ jobs:
     environment: ${{ github.event.inputs.environment || 'dev' }}
     env:
       WORKLOAD: ${{ github.event.inputs.workload }}
-      DOCKER_REPOSITORY: customerservice-spring-boot-3_${{ github.event.inputs.workload }}
+      DOCKER_REPOSITORY: customerservice-spring-boot-3:${{ github.event.inputs.workload }}
       DOCKER_USERNAME: wangxiaowu950330
 
     steps:
