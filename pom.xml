@@ -59,35 +59,6 @@
 	</dependencies>
 
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.graalvm.buildtools</groupId>
-					<artifactId>native-maven-plugin</artifactId>
-				</plugin>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-					<configuration>
-						<excludes>
-							<exclude>
-								<groupId>org.projectlombok</groupId>
-								<artifactId>lombok</artifactId>
-							</exclude>
-						</excludes>
-						<image>
-							<!--默认为：https://github.com/paketo-buildpacks/tiny-builder -->
-							<!--archived to another repo：https://github.com/paketo-buildpacks/builder-jammy-tiny -->
-							<builder>paketobuildpacks/builder-jammy-tiny</builder>
-							<env>
-								<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-								<BP_NATIVE_IMAGE_BUILD_ARGUMENTS>-march=compatibility</BP_NATIVE_IMAGE_BUILD_ARGUMENTS>
-							</env>
-						</image>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.hibernate.orm.tooling</groupId>
@@ -109,6 +80,51 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>native</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.graalvm.buildtools</groupId>
+							<artifactId>native-maven-plugin</artifactId>
+						</plugin>
+						<plugin>
+							<groupId>org.springframework.boot</groupId>
+							<artifactId>spring-boot-maven-plugin</artifactId>
+							<configuration>
+								<excludes>
+									<exclude>
+										<groupId>org.projectlombok</groupId>
+										<artifactId>lombok</artifactId>
+									</exclude>
+								</excludes>
+								<image>
+									<!--默认为：https://github.com/paketo-buildpacks/tiny-builder -->
+									<!--archived to another repo：https://github.com/paketo-buildpacks/builder-jammy-tiny -->
+									<builder>paketobuildpacks/builder-jammy-tiny</builder>
+									<env>
+										<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+										<BP_NATIVE_IMAGE_BUILD_ARGUMENTS>-march=compatibility</BP_NATIVE_IMAGE_BUILD_ARGUMENTS>
+									</env>
+								</image>
+							</configuration>
+							<executions>
+								<execution>
+									<id>build-image</id>
+									<goals>
+										<goal>repackage</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
 	<!--<repositories>
 		<repository>
 			<id>spring-milestones</id>
